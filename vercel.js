@@ -1,3 +1,3 @@
 // vercel.js
 
-module.exports = { vercelPreset: true };
+export const vercelPreset = true;
