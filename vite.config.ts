@@ -9,5 +9,5 @@ export default defineConfig({
     outDir: 'dist', // <-- This forces Vite to output to a 'dist' folder
     assetsDir: 'assets',
   },
-
+  base: process.env.VITE_BASE_PATH || "/quatax"
 })
