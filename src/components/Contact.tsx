@@ -1,17 +1,21 @@
 "use client";
 
-// pages/contact.jsx
-// ✅ CORRECTION APPLIED HERE
+// src/components/Contact.tsx
+
 import { 
   useState, 
   useEffect, 
-  useRef, 
+  useRef 
+} from "react"; 
+
+// ✅ TS1484 FIX: Use 'import type' for types that are not runtime values
+import type { 
   FormEvent, 
   ChangeEvent 
 } from "react"; 
+
 import { Mail, Phone, MessageCircle, Send, CheckCircle, AlertCircle } from "lucide-react";
 import emailjs from "@emailjs/browser";
-// import { useForm, ValidationError } from '@formspree/react'; // Removed unused import
 
 // 1. Define the type for the form data
 interface FormData {
@@ -27,7 +31,7 @@ type SubmitStatus = "success" | "error" | null;
 
 export default function Contact() {
   const [isVisible, setIsVisible] = useState(false);
-  const [formData, setFormData] = useState<FormData>({ // Use FormData interface
+  const [formData, setFormData] = useState<FormData>({ 
     fullName: "",
     companyName: "",
     email: "",
@@ -35,10 +39,9 @@ export default function Contact() {
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<SubmitStatus>(null); // Use SubmitStatus type
+  const [submitStatus, setSubmitStatus] = useState<SubmitStatus>(null); 
   const sectionRef = useRef<HTMLElement>(null);
   
-  // 3. Correctly type the form reference
   const form = useRef<HTMLFormElement>(null); 
 
   // Animate when visible
@@ -53,19 +56,18 @@ export default function Contact() {
     };
   }, []);
 
-  // ✅ Line 50 is now fixed by the new import
+  // Use ChangeEvent type
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value } as FormData));
   };
 
-  // ✅ Line 58 is now fixed by the new import
+  // Use FormEvent type
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setSubmitStatus(null); // Reset status
+    setSubmitStatus(null); 
 
-    // 5. Check if the form reference exists before sending
     if (!form.current) {
         setSubmitStatus("error");
         setIsSubmitting(false);
@@ -76,7 +78,6 @@ export default function Contact() {
     emailjs.sendForm("service_uiphqmn", "template_aw5d2jp", form.current, "0cq12MmBvtJkvA_4b").then(
       () => {
         setSubmitStatus("success");
-        // Reset form data state
         setFormData({
           fullName: "",
           companyName: "",
@@ -94,8 +95,6 @@ export default function Contact() {
       }
     );
   };
-
-
 
   return (
     <section
