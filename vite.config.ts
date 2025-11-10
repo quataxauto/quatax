@@ -8,6 +8,7 @@ export default defineConfig({
   build: {
     outDir: 'dist', // <-- This forces Vite to output to a 'dist' folder
     assetsDir: 'assets',
+    target: 'esnext', // Ensures that modern JavaScript features are supported
   },
   base: process.env.VITE_BASE_PATH || "/quatax"
 })
