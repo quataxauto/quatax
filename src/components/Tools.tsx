@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Bot } from "lucide-react";
+import { Bot } from "lucide-react"; // Removed unnecessary comma
 
 // ✅ Import Logos (Important)
 import openaiLogo from "../logos/openai.png";
@@ -23,36 +23,30 @@ import twilioLogo from "../logos/twillio.png";
 import IILabs from "../logos/IILabs.png";
 import CircleEllipsis from "../logos/CircleEllipsis.png";
 
-export default function Tools() { // Renamed from tools to Tools for convention
+export default function Tools() { // Renamed from tools to Tools
   const [isVisible, setIsVisible] = useState(false);
-  const [hoveredCard, setHoveredCard] = useState(null);
-  const sectionRef = useRef(null);
+  // Fix TS2345: Define the state type to allow string IDs or null
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null); 
+  const sectionRef = useRef<HTMLElement>(null); // Type sectionRef as an HTMLElement reference
 
-  // Set up Intersection Observer for fade-in animation
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        // Only set to visible if it's intersecting and currently false
-        if (entry.isIntersecting && !isVisible) {
-          setIsVisible(true);
-          // Optional: Disconnect after first intersection if you only want it to run once
-          // observer.unobserve(entry.target); 
-        }
-      },
+      ([entry]) => entry.isIntersecting && setIsVisible(true),
       { threshold: 0.2 }
     );
-    // Ensure sectionRef.current exists before observing
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
+    // Use optional chaining or an existence check
+  const currentRef = sectionRef.current;
+    if (currentRef) {
+        observer.observe(currentRef);
     }
-    // Cleanup function
+    
     return () => {
-      if (sectionRef.current) {
+      // Cleanup: disconnect the observer from the element if it exists
+      if (currentRef) {
         observer.disconnect();
       }
-    };
-  }, [isVisible]); // Added isVisible to deps, though generally not needed for one-time effects
-
+    }
+  }, []); // Empty dependency array means this runs once on mount.
   const tools = [
     {
       id: "openAI",
@@ -77,6 +71,7 @@ export default function Tools() { // Renamed from tools to Tools for convention
         { name: "Much more", logo: CircleEllipsis },
       ],
     },
+    // Commented-out sections remain as per original file
   ];
 
   return (
@@ -141,12 +136,11 @@ export default function Tools() { // Renamed from tools to Tools for convention
                     {service.features.map((f) => (
                       <div
                         key={f.name}
-                        // Adjusted width calculation for a cleaner 3-column layout based on an assumed 12-column grid or desired spacing.
-                        className="flex items-center gap-3 w-[calc(33.333%-0.75rem)]" 
+                        className="flex items-center gap-3 w-[calc(33.333%-0.75rem)]"
                       >
                         <img
                           src={f.logo}
-                          alt={`${f.name} logo`} // Added alt text for accessibility
+                          alt={`${f.name} logo`} // Added alt text
                           className={`w-6 h-6 transition-all duration-300 ${
                             hover ? "scale-110 opacity-90 " : "opacity-100"
                           }`}

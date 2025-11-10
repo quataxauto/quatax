@@ -1,14 +1,33 @@
-"use client"; // Required for client-side hooks like useState, useEffect, useRef
+"use client";
 
 // pages/contact.jsx
-import { useState, useEffect, useRef } from "react";
+// ✅ CORRECTION APPLIED HERE
+import { 
+  useState, 
+  useEffect, 
+  useRef, 
+  FormEvent, 
+  ChangeEvent 
+} from "react"; 
 import { Mail, Phone, MessageCircle, Send, CheckCircle, AlertCircle } from "lucide-react";
 import emailjs from "@emailjs/browser";
-// import { useForm, ValidationError } from '@formspree/react'; // ❌ Removed: Formspree logic is redundant with emailjs
+// import { useForm, ValidationError } from '@formspree/react'; // Removed unused import
 
-export default function Contact() { // Renamed from Contact to Contact for convention
+// 1. Define the type for the form data
+interface FormData {
+  fullName: string;
+  companyName: string;
+  email: string;
+  phone: string;
+  message: string;
+}
+
+// 2. Define the type for the submit status
+type SubmitStatus = "success" | "error" | null;
+
+export default function Contact() {
   const [isVisible, setIsVisible] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({ // Use FormData interface
     fullName: "",
     companyName: "",
     email: "",
@@ -16,11 +35,13 @@ export default function Contact() { // Renamed from Contact to Contact for conve
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null); // 'success' or 'error'
-  const sectionRef = useRef(null);
-  const form = useRef(); // Reference for the form element, needed by emailjs
+  const [submitStatus, setSubmitStatus] = useState<SubmitStatus>(null); // Use SubmitStatus type
+  const sectionRef = useRef<HTMLElement>(null);
+  
+  // 3. Correctly type the form reference
+  const form = useRef<HTMLFormElement>(null); 
 
-  // Animate when visible using Intersection Observer
+  // Animate when visible
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => entry.isIntersecting && setIsVisible(true),
@@ -28,58 +49,53 @@ export default function Contact() { // Renamed from Contact to Contact for conve
     );
     if (sectionRef.current) observer.observe(sectionRef.current);
     return () => {
-      if (sectionRef.current) {
-        observer.disconnect();
-      }
+      if (sectionRef.current) observer.disconnect();
     };
   }, []);
 
-  // ✅ Handle input
-  const handleInputChange = (e) => {
+  // ✅ Line 50 is now fixed by the new import
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value } as FormData));
   };
 
-  // ✅ Handle form submit using emailjs
-  const handleSubmit = async (e) => {
+  // ✅ Line 58 is now fixed by the new import
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setSubmitStatus(null); // Clear previous status
+    setSubmitStatus(null); // Reset status
 
-    try {
-      if (!form.current) throw new Error("Form reference is missing.");
-
-      await emailjs.sendForm(
-        "service_uiphqmn", // Replace with your Service ID
-        "template_aw5d2jp", // Replace with your Template ID
-        form.current,
-        "0cq12MmBvtJkvA_4b" // Replace with your Public Key
-      );
-
-      setSubmitStatus("success");
-      // Reset form data state
-      setFormData({
-        fullName: "",
-        companyName: "",
-        email: "",
-        phone: "",
-        message: "",
-      });
-      // form.current.reset(); // Optional: reset the DOM form
-    } catch (error) {
-      console.error("EmailJS Error:", error);
-      setSubmitStatus("error");
-      // Optionally show a more detailed error to the user
-      // alert("Error sending message. Please try again.");
-    } finally {
-      setIsSubmitting(false);
+    // 5. Check if the form reference exists before sending
+    if (!form.current) {
+        setSubmitStatus("error");
+        setIsSubmitting(false);
+        alert("Form reference missing. Cannot send message.");
+        return;
     }
+    
+    emailjs.sendForm("service_uiphqmn", "template_aw5d2jp", form.current, "0cq12MmBvtJkvA_4b").then(
+      () => {
+        setSubmitStatus("success");
+        // Reset form data state
+        setFormData({
+          fullName: "",
+          companyName: "",
+          email: "",
+          phone: "",
+          message: "",
+        });
+        setIsSubmitting(false);
+      },
+      (error) => {
+        setSubmitStatus("error");
+        setIsSubmitting(false);
+        console.error("EmailJS Error:", error);
+        alert("Error, please try again.");
+      }
+    );
   };
 
-  // ❌ Removed redundant Formspree success state check as we are using emailjs
-  // if (state.succeeded) {
-  //     return <p>Thanks for joining!</p>;
-  // }
+
 
   return (
     <section
@@ -146,7 +162,6 @@ export default function Contact() { // Renamed from Contact to Contact for conve
               )}
 
               {/* The form */}
-              {/* Note: Input names must match your EmailJS template variables */}
               <form ref={form} onSubmit={handleSubmit} className="space-y-6">
                 {[
                   { label: "Full Name *", name: "fullName", type: "text" },
@@ -156,16 +171,16 @@ export default function Contact() { // Renamed from Contact to Contact for conve
                 ].map((field) => (
                   <div key={field.name}>
                     <label 
-                      htmlFor={field.name} // Added htmlFor for accessibility
-                      className="block text-sm font-semibold text-[#0D0D0D] dark:text-white mb-2"
+                       htmlFor={field.name}
+                       className="block text-sm font-semibold text-[#0D0D0D] dark:text-white mb-2"
                     >
                       {field.label}
                     </label>
                     <input
-                      id={field.name} // Added id to link with label
+                      id={field.name}
                       type={field.type}
                       name={field.name}
-                      value={formData[field.name]}
+                      value={formData[field.name as keyof FormData]} // TS7053 Fix: Use keyof FormData
                       onChange={handleInputChange}
                       required={field.name !== "phone"}
                       className="w-full px-4 py-3 rounded-xl border border-[#E0E0E0] dark:border-[#404040] bg-white dark:bg-[#262626] text-[#0D0D0D] dark:text-white focus:ring-2 focus:ring-[#6366F1] transition-all duration-150"
@@ -176,13 +191,13 @@ export default function Contact() { // Renamed from Contact to Contact for conve
                 {/* Message Field */}
                 <div>
                   <label 
-                    htmlFor="message" // Added htmlFor for accessibility
+                    htmlFor="message"
                     className="block text-sm font-semibold text-[#0D0D0D] dark:text-white mb-2"
                   >
                     Message / Describe Your Needs *
                   </label>
                   <textarea
-                    id="message" // Added id to link with label
+                    id="message"
                     name="message"
                     value={formData.message}
                     onChange={handleInputChange}
