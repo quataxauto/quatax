@@ -6,7 +6,6 @@ export default defineConfig({
   plugins: [react(),
   tailwindcss(),],
   build: {
-    outDir: 'build', // <-- This forces Vite to output to a 'build' folder
     assetsDir: 'assets',
   },
   base: './', // <-- ADDED
