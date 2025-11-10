@@ -1,5 +1,7 @@
+"use client";
+
 // src/app/ElevenLabsWidget.tsx
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 export default function ElevenLabsWidget() {
   useEffect(() => {
@@ -11,8 +13,10 @@ export default function ElevenLabsWidget() {
     document.body.appendChild(script);
 
     return () => {
-      // Optional cleanup if you navigate between pages
-      document.body.removeChild(script);
+      // Cleanup: Remove the script tag from the document body when the component unmounts
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
     };
   }, []);
 

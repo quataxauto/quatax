@@ -1,9 +1,12 @@
+"use client"; // Required for client-side hooks like useState, useEffect, useRef
+
 // pages/contact.jsx
 import { useState, useEffect, useRef } from "react";
 import { Mail, Phone, MessageCircle, Send, CheckCircle, AlertCircle } from "lucide-react";
 import emailjs from "@emailjs/browser";
-import { useForm, ValidationError } from '@formspree/react';
-export default function Contact() {
+// import { useForm, ValidationError } from '@formspree/react'; // ❌ Removed: Formspree logic is redundant with emailjs
+
+export default function Contact() { // Renamed from Contact to Contact for convention
   const [isVisible, setIsVisible] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
@@ -13,17 +16,22 @@ export default function Contact() {
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null);
+  const [submitStatus, setSubmitStatus] = useState(null); // 'success' or 'error'
   const sectionRef = useRef(null);
+  const form = useRef(); // Reference for the form element, needed by emailjs
 
-  // Animate when visible
+  // Animate when visible using Intersection Observer
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => entry.isIntersecting && setIsVisible(true),
       { threshold: 0.2 }
     );
     if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
+    return () => {
+      if (sectionRef.current) {
+        observer.disconnect();
+      }
+    };
   }, []);
 
   // ✅ Handle input
@@ -31,31 +39,48 @@ export default function Contact() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-  const form = useRef();
-  // ✅ Handle form submit
+
+  // ✅ Handle form submit using emailjs
   const handleSubmit = async (e) => {
     e.preventDefault();
-    emailjs.sendForm("service_uiphqmn", "template_aw5d2jp", form.current, "0cq12MmBvtJkvA_4b").then(
-      ()=>{
-        setSubmitStatus("success");
-        form.current.reset();
-        setFormData({
+    setIsSubmitting(true);
+    setSubmitStatus(null); // Clear previous status
+
+    try {
+      if (!form.current) throw new Error("Form reference is missing.");
+
+      await emailjs.sendForm(
+        "service_uiphqmn", // Replace with your Service ID
+        "template_aw5d2jp", // Replace with your Template ID
+        form.current,
+        "0cq12MmBvtJkvA_4b" // Replace with your Public Key
+      );
+
+      setSubmitStatus("success");
+      // Reset form data state
+      setFormData({
         fullName: "",
         companyName: "",
         email: "",
         phone: "",
         message: "",
       });
-      },
-      (error) => {
-        alert("error , please try again");
-      }
-    )
+      // form.current.reset(); // Optional: reset the DOM form
+    } catch (error) {
+      console.error("EmailJS Error:", error);
+      setSubmitStatus("error");
+      // Optionally show a more detailed error to the user
+      // alert("Error sending message. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
-  const [state, btats] = useForm("movyaepp");
-  if (state.succeeded) {
-      return <p>Thanks for joining!</p>;
-  }
+
+  // ❌ Removed redundant Formspree success state check as we are using emailjs
+  // if (state.succeeded) {
+  //     return <p>Thanks for joining!</p>;
+  // }
+
   return (
     <section
       id="contact"
@@ -121,6 +146,7 @@ export default function Contact() {
               )}
 
               {/* The form */}
+              {/* Note: Input names must match your EmailJS template variables */}
               <form ref={form} onSubmit={handleSubmit} className="space-y-6">
                 {[
                   { label: "Full Name *", name: "fullName", type: "text" },
@@ -129,10 +155,14 @@ export default function Contact() {
                   { label: "Phone Number", name: "phone", type: "tel" },
                 ].map((field) => (
                   <div key={field.name}>
-                    <label className="block text-sm font-semibold text-[#0D0D0D] dark:text-white mb-2">
+                    <label 
+                      htmlFor={field.name} // Added htmlFor for accessibility
+                      className="block text-sm font-semibold text-[#0D0D0D] dark:text-white mb-2"
+                    >
                       {field.label}
                     </label>
                     <input
+                      id={field.name} // Added id to link with label
                       type={field.type}
                       name={field.name}
                       value={formData[field.name]}
@@ -145,10 +175,14 @@ export default function Contact() {
 
                 {/* Message Field */}
                 <div>
-                  <label className="block text-sm font-semibold text-[#0D0D0D] dark:text-white mb-2">
+                  <label 
+                    htmlFor="message" // Added htmlFor for accessibility
+                    className="block text-sm font-semibold text-[#0D0D0D] dark:text-white mb-2"
+                  >
                     Message / Describe Your Needs *
                   </label>
                   <textarea
+                    id="message" // Added id to link with label
                     name="message"
                     value={formData.message}
                     onChange={handleInputChange}
@@ -161,7 +195,7 @@ export default function Contact() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="cursor-pointer w-full px-8 py-4 rounded-xl bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] hover:from-[#5856EB] hover:to-[#7C3AED] disabled:from-[#9CA3AF] text-white font-semibold text-lg transition-all duration-150 flex items-center justify-center gap-2"
+                  className="cursor-pointer w-full px-8 py-4 rounded-xl bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] hover:from-[#5856EB] hover:to-[#7C3AED] disabled:from-[#9CA3AF] disabled:to-[#9CA3AF] text-white font-semibold text-lg transition-all duration-150 flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
                     <>

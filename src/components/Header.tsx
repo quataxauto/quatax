@@ -1,11 +1,18 @@
 import { useState } from "react";
-import { ChevronDown, Menu, X } from "lucide-react";
-import logo from "../logos/logo.png"; // import the file
+import { Menu, X } from "lucide-react"; // Removed unused 'ChevronDown' import
+import logo from "../logos/logo.png";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const menuItems = [
+  // 1. Define interface for menu items
+  interface MenuItem {
+    name: string;
+    href: string;
+  }
+  
+  // 2. Explicitly type the menuItems array
+  const menuItems: MenuItem[] = [
     { name: "Home", href: "#home" },
     { name: "About", href: "#about" },
     { name: "Services", href: "#services" },
@@ -14,7 +21,8 @@ export default function Header() {
     { name: "Contact", href: "#contact" },
   ];
 
-  const scrollToSection = (href) => {
+  // 3. Explicitly type the 'href' parameter as string (TS7006 fix)
+  const scrollToSection = (href: string) => {
     const element = document.querySelector(href);
     if (element) element.scrollIntoView({ behavior: "smooth" });
     setIsMobileMenuOpen(false);
@@ -22,7 +30,6 @@ export default function Header() {
 
   return (
     <>
-      {/* Google Fonts import */}
       <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
         rel="stylesheet"

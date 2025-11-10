@@ -1,28 +1,47 @@
 import { useState, useEffect } from "react";
-import { ChevronRight, Sparkles, Zap, MessagesSquare, Headset,  } from "lucide-react";
+import { ChevronRight, Sparkles, Zap, MessagesSquare, Headset } from "lucide-react"; // Removed trailing comma
+
+// 1. Define the interface for the floating elements state
+interface FloatingElement {
+  id: number;
+  delay: number;
+  duration: number;
+  x: number;
+  y: number;
+}
+
+// 2. Define the interface for the tmatm array (Best Sellers)
+interface TmatmItem {
+  title: string;
+  status: string;
+  icon: React.ElementType;
+}
 
 export default function Hero() {
   const [animationsVisible, setAnimationsVisible] = useState(false);
-  const [floatingElements, setFloatingElements] = useState([]);
+  // 3. Correctly type the state for floating elements
+  const [floatingElements, setFloatingElements] = useState<FloatingElement[]>([]); 
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setAnimationsVisible(true);
     }, 300);
 
-    const elements = Array.from({ length: 8 }, (_, i) => ({
+    const elements: FloatingElement[] = Array.from({ length: 8 }, (_, i) => ({
       id: i,
       delay: i * 0.5,
       duration: 3 + (i % 3),
       x: Math.random() * 100,
       y: Math.random() * 100,
     }));
-    setFloatingElements(elements);
+    // This now correctly sets the state with the defined type
+    setFloatingElements(elements); 
 
     return () => clearTimeout(timer);
   }, []);
 
-  const tmatm = [
+  // 4. Explicitly type the tmatm array
+  const tmatm: TmatmItem[] = [
     {
       title: "AI Chat Bot",
       status: "In Your Site or App",
@@ -166,9 +185,9 @@ export default function Hero() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {tmatm.map((item, index) => (
                   <div key={index} className="p-6 rounded-2xl bg-gradient-to-br from-[#F8FAFC] to-[#F1F5F9] dark:from-[#262626] dark:to-[#1E1E1E] border dark:border-[#404040]/50">
-                  <div className="flex justify-center items-center mb-4">
-                    <item.icon size={35} className="text-[#6366F1] dark:text-[#8B5CF6]" />
-                  </div>
+                    <div className="flex justify-center items-center mb-4">
+                      <item.icon size={35} className="text-[#6366F1] dark:text-[#8B5CF6]" />
+                    </div>
 
                     <div className="flex items-center gap-3">
 
@@ -196,7 +215,7 @@ export default function Hero() {
               className="absolute -top-4 -right-4 bg-[#000000] text-white px-4 py-3 rounded-2xl text-xl shadow-lg"
               style={{ fontFamily: "'Stack Sans Notch', sans-serif", fontWeight: 700 , fontStyle: "normal" }}
             >
-           20% OFF NOW🔥
+            20% OFF NOW🔥
             </div>
 
 
@@ -204,7 +223,8 @@ export default function Hero() {
           </div>
         </div>
 
-        <style jsx global>{`
+        {/* 5. Removed 'jsx global' to fix TS2322 error */}
+        <style>{`
           @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-20px); }

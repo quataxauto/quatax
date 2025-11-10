@@ -1,8 +1,15 @@
 import { Mail, Phone, MapPin, Linkedin, Twitter } from "lucide-react";
-import logo from "../logos/logo.png"; // import the file
+import logo from "../logos/logo.png";
 
 export default function Footer() {
-  const navigationLinks = [
+  // 1. Define interface for link items
+  interface LinkItem {
+    name: string;
+    href: string;
+  }
+  
+  // 2. Explicitly type the arrays
+  const navigationLinks: LinkItem[] = [
     { name: "Home", href: "#home" },
     { name: "About", href: "#about" },
     { name: "Services", href: "#services" },
@@ -10,7 +17,7 @@ export default function Footer() {
     { name: "Contact", href: "#contact" },
   ];
 
-  const serviceLinks = [
+  const serviceLinks: LinkItem[] = [
     { name: "Business Process Automation", href: "#services" },
     { name: "AI Chatbots", href: "#services" },
     { name: "Workflow Optimization", href: "#services" },
@@ -18,7 +25,7 @@ export default function Footer() {
     { name: "Custom AI Solutions", href: "#services" },
   ];
 
-  const industryLinks = [
+  const industryLinks: LinkItem[] = [
     { name: "Healthcare", href: "#industries" },
     { name: "Finance", href: "#industries" },
     { name: "Retail", href: "#industries" },
@@ -26,14 +33,14 @@ export default function Footer() {
     { name: "Education", href: "#industries" },
   ];
 
-  const scrollToSection = (href) => {
+  // 3. Explicitly type the 'href' parameter as string (TS7006 fix)
+  const scrollToSection = (href: string) => {
     const element = document.querySelector(href);
     if (element) element.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
     <>
-      {/* Google Fonts import */}
       <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
         rel="stylesheet"

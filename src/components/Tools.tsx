@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, useEffect, useRef } from "react";
-import { Bot,  } from "lucide-react";
+import { Bot } from "lucide-react";
 
 // ✅ Import Logos (Important)
 import openaiLogo from "../logos/openai.png";
@@ -21,19 +23,35 @@ import twilioLogo from "../logos/twillio.png";
 import IILabs from "../logos/IILabs.png";
 import CircleEllipsis from "../logos/CircleEllipsis.png";
 
-export default function tools() {
+export default function Tools() { // Renamed from tools to Tools for convention
   const [isVisible, setIsVisible] = useState(false);
   const [hoveredCard, setHoveredCard] = useState(null);
   const sectionRef = useRef(null);
 
+  // Set up Intersection Observer for fade-in animation
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => entry.isIntersecting && setIsVisible(true),
+      ([entry]) => {
+        // Only set to visible if it's intersecting and currently false
+        if (entry.isIntersecting && !isVisible) {
+          setIsVisible(true);
+          // Optional: Disconnect after first intersection if you only want it to run once
+          // observer.unobserve(entry.target); 
+        }
+      },
       { threshold: 0.2 }
     );
-    sectionRef.current && observer.observe(sectionRef.current);
-    return () => observer.disconnect();
-  }, []);
+    // Ensure sectionRef.current exists before observing
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+    // Cleanup function
+    return () => {
+      if (sectionRef.current) {
+        observer.disconnect();
+      }
+    };
+  }, [isVisible]); // Added isVisible to deps, though generally not needed for one-time effects
 
   const tools = [
     {
@@ -59,41 +77,6 @@ export default function tools() {
         { name: "Much more", logo: CircleEllipsis },
       ],
     },
-    // {
-    //   id: "SocialMedia",
-    //   icon: Instagram,
-    //   title: "Social Media",
-    //   description: "Integrate your social platforms to enhance productivity",
-    //   features: [
-    //     { name: "Facebook", logo: facebookLogo },
-    //     { name: "WhatsApp", logo: whatsappLogo },
-    //     { name: "Instagram", logo: instagramLogo },
-    //     { name: "Telegram", logo: telegramLogo },
-    //   ],
-    // },
-    // {
-    //   id: "work",
-    //   icon: Sheet,
-    //   title: "Organise your work",
-    //   description: "Make your documental work easier and more organised",
-    //   features: [
-    //     { name: "Google Calendar", logo: calendarLogo },
-    //     { name: "Google Sheets", logo: sheetsLogo },
-    //     { name: "Google Forms", logo: formsLogo },
-    //   ],
-    // },
-    // {
-    //   id: "Tools",
-    //   icon: Network,
-    //   title: "Tools",
-    //   description: "Integrate the newest tools to make your work easier",
-    //   features: [
-    //     { name: "N8N", logo: n8nLogo },
-    //     { name: "Webhooks", logo: webhookLogo },
-    //     { name: "Twilio", logo: twilioLogo },
-    //     { name: "MailChimp", logo: IILabs },
-    //   ],
-    // },
   ];
 
   return (
@@ -154,21 +137,23 @@ export default function tools() {
                     {service.description}
                   </p>
 
-            <div className="flex flex-wrap gap-4">
-                {service.features.map((f) => (
-                  <div
-                    key={f.name}
-                    className="flex items-center gap-3 w-[calc(33.333%-0.75rem)]"
-                  >
-                    <img
-                      src={f.logo}
-                      className={`w-6 h-6 transition-all duration-300 ${
-                        hover ? "scale-110 opacity-90 " : "opacity-100"
-                      }`}
-                    />
-                    <span className={hover ? "text-white/80" : "text-[#555]"}>{f.name}</span>
-                  </div>
-                ))}
+                  <div className="flex flex-wrap gap-4">
+                    {service.features.map((f) => (
+                      <div
+                        key={f.name}
+                        // Adjusted width calculation for a cleaner 3-column layout based on an assumed 12-column grid or desired spacing.
+                        className="flex items-center gap-3 w-[calc(33.333%-0.75rem)]" 
+                      >
+                        <img
+                          src={f.logo}
+                          alt={`${f.name} logo`} // Added alt text for accessibility
+                          className={`w-6 h-6 transition-all duration-300 ${
+                            hover ? "scale-110 opacity-90 " : "opacity-100"
+                          }`}
+                        />
+                        <span className={hover ? "text-white/80" : "text-[#555]"}>{f.name}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
