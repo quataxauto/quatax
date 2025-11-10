@@ -5,5 +5,9 @@
     { "path": "./tsconfig.node.json" },
     
   ],
+  "compilerOptions": {
+    // Other compiler options...
+    "jsx": "react-jsx", // <-- Must be here
+  },
   "jsx": "react-jsx", // or "react-jsxdev" for development
 }
