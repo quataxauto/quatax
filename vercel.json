@@ -4,10 +4,10 @@
   "outputDirectory": "build", 
   
 
-  "routes": [
+  "rewrites": [
     {
-      "src": "/(.*)",
-      "dest": "/"
+      "source": "/(.*)",
+      "destination": "/"
     }
   ]
 }
