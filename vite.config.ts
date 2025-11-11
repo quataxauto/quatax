@@ -10,5 +10,5 @@ export default defineConfig({
     assetsDir: 'assets',
     target: 'esnext', // Ensures that modern JavaScript features are supported
   },
-  base: process.env.VITE_BASE_PATH || "/quatax"
+  base: './', // 👈 THIS LINE IS THE KEY
 })
