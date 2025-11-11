@@ -10,5 +10,5 @@ export default defineConfig({
     assetsDir: 'assets',
     target: 'esnext', // Ensures that modern JavaScript features are supported
   },
-  base: './', // 👈 THIS LINE IS THE KEY
+  base: '/', // 👈 THIS LINE IS THE KEY
 })
