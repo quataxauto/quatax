@@ -1,17 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import {
-  ShoppingCart,
-  Heart,
-  CreditCard,
-  Home,
-  Truck,
-  Megaphone,
-  GraduationCap,
-  Building,
-  Factory,
-  Utensils,
-  Shield,
-  Car,
+  ShoppingCart, Heart, CreditCard, Home, Truck, Megaphone,
+  GraduationCap, Building, Factory, Utensils, Shield, Car,
 } from "lucide-react";
 
 // Define the structure for an Industry object
@@ -23,8 +13,8 @@ interface Industry {
   examples: string[];
 }
 
-// Data for all industries
-const industries: Industry[] = [
+// Data for all industries (renamed to INDUSTRY_DATA for clarity)
+const INDUSTRY_DATA: Industry[] = [
   {
     id: "retail",
     icon: ShoppingCart,
@@ -114,9 +104,144 @@ const industries: Industry[] = [
   },
 ];
 
+interface IndustryCardProps {
+  industry: Industry;
+  index: number;
+  isVisible: boolean;
+}
+
+// --- Card Component with Original Opacity Swap Logic ---
+const IndustryCard = ({ industry, index, isVisible }: IndustryCardProps) => {
+  const IconComponent = industry.icon;
+
+  // Base card styling
+  const cardBaseClasses = `
+    relative group p-6 rounded-3xl border transition-all duration-300 cursor-pointer h-full
+    bg-white dark:bg-[#1A1A1A] border-[#E0E0E0] dark:border-[#404040] shadow-md
+    hover:bg-gradient-to-br hover:from-[#6366F1] hover:to-[#8B5CF6] 
+    hover:border-transparent hover:shadow-2xl hover:transform hover:-translate-y-2
+    hover:shadow-lg hover:shadow-[#6366F1]/40 dark:hover:shadow-[#8B5CF6]/40
+  `;
+
+  // Entrance animation staging
+  const animationClasses = `transition-all duration-700 ${
+    isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+  }`;
+  
+  // Staggered animation effect
+  const delayStyle = { transitionDelay: `${index * 50 + 300}ms` };
+
+  return (
+    <div
+      className={animationClasses}
+      style={delayStyle}
+    >
+      <div className={cardBaseClasses}>
+        {/* CONTENT CONTAINER: Added relative z-10 for layering */}
+        <div className="relative z-10">
+
+          {/* ICON CONTAINER (Original Opacity Swap Logic) */}
+          <div className="relative w-12 h-12 mb-4">
+            {/* 1. Base Icon (Default State Color) */}
+            <div
+              className={`
+                absolute w-full h-full rounded-2xl flex items-center justify-center transition-all duration-300
+                bg-gradient-to-br from-[#6366F1]/10 to-[#8B5CF6]/10 
+                group-hover:bg-white/20 group-hover:backdrop-blur-sm
+              `}
+            >
+              <IconComponent
+                size={24}
+                strokeWidth={1.5}
+                className="text-[#6366F1] dark:text-[#8B5CF6]"
+              />
+            </div>
+
+            {/* 2. Hover Icon (White Opacity Overlay) */}
+            <div
+              className={`
+                absolute inset-0 w-full h-full rounded-2xl flex items-center justify-center transition-opacity duration-300 
+                opacity-0 group-hover:opacity-100
+              `}
+            >
+              <IconComponent
+                size={24}
+                strokeWidth={1.5}
+                className="text-white"
+              />
+            </div>
+          </div>
+
+
+          {/* NAME (Original Opacity Swap Logic) */}
+          <h3
+            className="text-lg font-bold mb-2 relative"
+          >
+            {/* 1. Base Title (Default State Color) */}
+            <span className="relative z-10 transition-opacity duration-300 text-[#0D0D0D] dark:text-white opacity-100 group-hover:opacity-0">
+              {industry.name}
+            </span>
+            {/* 2. Hover Title (White Opacity Overlay) */}
+            <span className="absolute inset-0 z-20 transition-opacity duration-300 text-white opacity-0 group-hover:opacity-100">
+              {industry.name}
+            </span>
+          </h3>
+
+          {/* DESCRIPTION (Original Opacity Swap Logic) */}
+          <p
+            className="text-sm leading-relaxed mb-4 relative"
+          >
+            {/* 1. Base Description (Default State Color) */}
+            <span className="relative z-10 transition-opacity duration-300 text-[#666666] dark:text-[#B0B0B0] opacity-100 group-hover:opacity-0">
+              {industry.description}
+            </span>
+            {/* 2. Hover Description (White Opacity Overlay) */}
+            <span className="absolute inset-0 z-20 transition-opacity duration-300 text-white/90 opacity-0 group-hover:opacity-100">
+              {industry.description}
+            </span>
+          </p>
+
+          {/* EXAMPLES LIST (Original Opacity Swap Logic) */}
+          <div className="space-y-1">
+            {industry.examples.slice(0, 2).map((example, exampleIndex) => (
+              <div
+                key={exampleIndex}
+                className="flex items-center gap-2"
+              >
+                {/* Bullet Point */}
+                <div
+                  className={`
+                    w-1.5 h-1.5 rounded-full transition-all duration-300
+                    bg-[#6366F1] dark:bg-[#8B5CF6]
+                    group-hover:bg-white/80
+                  `}
+                />
+
+                {/* Feature Text */}
+                <span className="text-xs font-medium relative">
+                  {/* 1. Base Text */}
+                  <span className="relative z-10 transition-opacity duration-300 text-[#555555] dark:text-[#C0C0C0] opacity-100 group-hover:opacity-0">
+                    {example}
+                  </span>
+                  {/* 2. Hover Text */}
+                  <span className="absolute inset-0 z-20 transition-opacity duration-300 text-white/80 opacity-0 group-hover:opacity-100">
+                    {example}
+                  </span>
+                </span>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
+// --- Main Component ---
 export default function Industries() {
   const [isVisible, setIsVisible] = useState(false);
-  const [hoveredIndustry, setHoveredIndustry] = useState<string | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
 
   // Intersection Observer for fade-in effect
@@ -138,9 +263,18 @@ export default function Industries() {
     return () => observer.disconnect();
   }, []);
 
+  const headerAnimationClasses = `transition-all duration-700 ${
+    isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+  }`;
+  
+  const ctaAnimationClasses = `text-center transition-all duration-700 delay-700 ${
+    isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+  }`;
+
+
   return (
     <>
-      {/* Note: In a real Next.js app, this should be in _document.js or a global stylesheet */}
+      {/* ⚠️ Original external font link is kept here */}
       <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
         rel="stylesheet"
@@ -156,9 +290,7 @@ export default function Industries() {
           {/* Section heading */}
           <div className="text-center mb-16 md:mb-20">
             <div
-              className={`transition-all duration-700 ${
-                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-              }`}
+              className={headerAnimationClasses}
             >
               <h2
                 className="text-4xl md:text-[56px] leading-tight md:leading-[1.1] text-[#0D0D0D] dark:text-white mb-6"
@@ -176,122 +308,19 @@ export default function Industries() {
                 No matter your field, QuataX can automate it. We serve businesses across
                 diverse industries with tailored automation solutions.
               </p>
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#6366F1]/10 to-[#8B5CF6]/10 border border-[#6366F1]/20 dark:border-[#8B5CF6]/30">
-                <span className="text-sm font-medium text-[#6366F1] dark:text-[#8B5CF6]">
-                  ✨ Custom solutions for your industry
-                </span>
-              </div>
             </div>
           </div>
 
           {/* Industries grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-16">
-            {industries.map((industry, index) => {
-              const IconComponent = industry.icon;
-              const isHovered = hoveredIndustry === industry.id;
-
-              return (
-                <div
-                  key={industry.id}
-                  className={`transition-all duration-700 ${
-                    isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-                  }`}
-                  // Staggered animation effect
-                  style={{ transitionDelay: `${index * 50 + 300}ms` }}
-                >
-                  <div
-                    className={`
-                      group relative p-6 rounded-3xl border transition-all duration-300 cursor-pointer h-full
-                      ${
-                        isHovered
-                          ? "bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] border-transparent shadow-2xl transform -translate-y-2"
-                          : "bg-white dark:bg-[#1A1A1A] border-[#E0E0E0] dark:border-[#404040] hover:border-[#6366F1]/30 dark:hover:border-[#8B5CF6]/30 shadow-md hover:shadow-lg"
-                      }
-                    `}
-                    onMouseEnter={() => setHoveredIndustry(industry.id)}
-                    onMouseLeave={() => setHoveredIndustry(null)}
-                  >
-                    {/* Icon */}
-                    <div
-                      className={`
-                        w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-all duration-300
-                        ${
-                          isHovered
-                            ? "bg-white/20 backdrop-blur-sm"
-                            : "bg-gradient-to-br from-[#6366F1]/10 to-[#8B5CF6]/10 group-hover:from-[#6366F1]/20 group-hover:to-[#8B5CF6]/20"
-                        }
-                      `}
-                    >
-                      <IconComponent
-                        size={24}
-                        strokeWidth={1.5}
-                        className={`transition-all duration-300 ${
-                          isHovered
-                            ? "text-white"
-                            : "text-[#6366F1] dark:text-[#8B5CF6]"
-                        }`}
-                      />
-                    </div>
-
-                    {/* Name */}
-                    <h3
-                      className={`
-                        text-lg font-bold mb-2 transition-all duration-300
-                        ${isHovered ? "text-white" : "text-[#0D0D0D] dark:text-white"}
-                      `}
-                    >
-                      {industry.name}
-                    </h3>
-
-                    {/* Description */}
-                    <p
-                      className={`
-                        text-sm leading-relaxed mb-4 transition-all duration-300
-                        ${isHovered ? "text-white/90" : "text-[#666666] dark:text-[#B0B0B0]"}
-                      `}
-                    >
-                      {industry.description}
-                    </p>
-
-                    {/* Examples */}
-                    <div className="space-y-1">
-                      {industry.examples.slice(0, 2).map((example, exampleIndex) => (
-                        <div
-                          key={exampleIndex}
-                          className="flex items-center gap-2"
-                        >
-                          <div
-                            className={`
-                              w-1.5 h-1.5 rounded-full transition-all duration-300
-                              ${isHovered ? "bg-white/80" : "bg-[#6366F1] dark:bg-[#8B5CF6]"}
-                            `}
-                          />
-                          <span
-                            className={`
-                              text-xs font-medium transition-all duration-300
-                              ${
-                                isHovered
-                                  ? "text-white/80"
-                                  : "text-[#555555] dark:text-[#C0C0C0]"
-                              }
-                            `}
-                          >
-                            {example}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+            {INDUSTRY_DATA.map((industry, index) => (
+              <IndustryCard key={industry.id} industry={industry} index={index} isVisible={isVisible} />
+            ))}
           </div>
 
           {/* Bottom section (Call to Action) */}
           <div
-            className={`text-center transition-all duration-700 delay-700 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            }`}
+            className={ctaAnimationClasses}
           >
             <div className="max-w-3xl mx-auto p-8 rounded-3xl bg-gradient-to-br from-[#F8FAFC] to-[#F1F5F9] dark:from-[#1A1A1A] dark:to-[#262626] border border-[#E0E0E0] dark:border-[#404040]">
               <h3 className="text-2xl md:text-3xl font-bold text-[#0D0D0D] dark:text-white mb-4">

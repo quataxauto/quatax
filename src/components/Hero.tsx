@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ChevronRight, Sparkles, Zap, MessagesSquare, Headset } from "lucide-react"; // Removed trailing comma
+import { ChevronRight, Zap, MessagesSquare, Headset, AudioLines } from "lucide-react"; // Removed trailing comma
 
 // 1. Define the interface for the floating elements state
 interface FloatingElement {
@@ -44,18 +44,18 @@ export default function Hero() {
   const tmatm: TmatmItem[] = [
     {
       title: "AI Chat Bot",
-      status: "In Your Site or App",
+      status: "24/7 Answering Questions On Your Site",
       icon: MessagesSquare,
     },
     {
-      title: "AI Customer Service",
-      status: "Handle Your Clients Well",
+      title: "Customer Support",
+      status: "Solve Problems, Reserve Appointments",
+      icon: AudioLines,
+    },
+    {
+      title: "Cold Calling Agent",
+      status: "Humanized Calls - Increase Leads",
       icon: Headset,
-    },
-    {
-      title: "AI Humanised Calls",
-      status: "Never Miss A Call",
-      icon: MessagesSquare,
     },
   ];
 
@@ -105,15 +105,7 @@ export default function Hero() {
                   : "opacity-0 translate-y-8"
               }`}
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#6366F1]/10 to-[#8B5CF6]/10 border border-[#6366F1]/20 dark:border-[#8B5CF6]/30 mb-6">
-                <Sparkles
-                  size={16}
-                  className="text-[#6366F1] dark:text-[#8B5CF6]"
-                />
-                <span className="text-sm font-medium text-[#6366F1] dark:text-[#8B5CF6]">
-                  AI-Powered Automation
-                </span>
-              </div>
+
 
               <h1 className="text-4xl md:text-[72px] leading-tight md:leading-[1.1] text-[#0D0D0D] dark:text-white mb-6 max-w-5xl mx-auto font-bold">
                 Transform Your Business with{" "}
@@ -153,7 +145,7 @@ export default function Hero() {
 
               <button
                 onClick={scrollToContact}
-                className="cursor-pointer group flex items-center gap-3 px-8 py-4 bg-white dark:bg-[#262626] border dark:border-[#404040] rounded-xl hover:border-[#6366F1] transition-all shadow-md"
+                className="cursor-pointer group flex items-center gap-3 px-8 py-4 bg-white dark:bg-[#262626] rounded-xl transition-all shadow-md"
               >
                 <span className="cursor-pointer text-[#0D0D0D] dark:text-white font-semibold text-lg">
                   Book Free Consultation
@@ -169,7 +161,7 @@ export default function Hero() {
                 : "opacity-0 translate-y-12"
             }`}
           >
-            <div className="relative rounded-3xl border bg-white dark:bg-[#1A1A1A] p-8 shadow-2xl">
+            <div className="relative rounded-3xl bg-white dark:bg-[#1A1A1A] p-8 shadow-2xl">
               <div className="flex items-center justify-between mb-8">
                 <div>
                   <h3 className="text-4xl font-bold text-[#0D0D0D] dark:text-white mb-1">
@@ -184,7 +176,7 @@ export default function Hero() {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {tmatm.map((item, index) => (
-                  <div key={index} className="p-6 rounded-2xl bg-gradient-to-br from-[#F8FAFC] to-[#F1F5F9] dark:from-[#262626] dark:to-[#1E1E1E] border dark:border-[#404040]/50">
+                  <div key={index} className="p-6 rounded-2xl bg-gradient-to-br from-[#F8FAFC] to-[#F1F5F9] dark:from-[#262626] dark:to-[#1E1E1E] ">
                     <div className="flex justify-center items-center mb-4">
                       <item.icon size={35} className="text-[#6366F1] dark:text-[#8B5CF6]" />
                     </div>

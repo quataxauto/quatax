@@ -8,5 +8,10 @@
   "compilerOptions": {
     // Other compiler options...
     "jsx": "react-jsx", // <-- Must be here
+    "paths": {
+    "@/*": ["src/*"]
   },
+    "baseUrl": ".",
+  },
+
 }

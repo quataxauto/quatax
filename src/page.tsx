@@ -9,11 +9,10 @@ import Tools from "./components/Tools";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 
-
-
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-white dark:bg-[#121212]">
+    // ADDED overflow-x-hidden to prevent horizontal scroll caused by the sliding menu
+    <div className="min-h-screen bg-white dark:bg-[#121212] overflow-x-hidden">
       {/* HEADER SECTION */}
       <Header />
 

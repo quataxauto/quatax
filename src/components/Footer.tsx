@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin, Linkedin, Twitter } from "lucide-react";
+import { Mail, Phone, MapPin, Linkedin, Instagram, Facebook } from "lucide-react";
 import logo from "../logos/logo.png";
 
 export default function Footer() {
@@ -141,18 +141,20 @@ export default function Footer() {
                 <h5 className="text-white font-semibold text-sm mb-4">Follow Us</h5>
                 <div className="flex items-center gap-4">
                   <a
-                    href="#"
+                    href="https://www.facebook.com/people/QuataX/61583330836353/"
                     className="cursor-pointer w-10 h-10 rounded-lg bg-gray-800 hover:bg-[#6366F1] flex items-center justify-center transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-[#6366F1] focus:ring-offset-2 focus:ring-offset-[#0D0D0D]"
-                    aria-label="LinkedIn"
+                    aria-label="Facebook"
+                    target="_blank" rel="noopener noreferrer"
                   >
-                    <Linkedin size={18} className="text-white" />
+                    <Facebook size={18} className="text-white" />
                   </a>
                   <a
-                    href="#"
+                    href="https://instagram.com/quatax.ai"
                     className="cursor-pointer w-10 h-10 rounded-lg bg-gray-800 hover:bg-[#6366F1] flex items-center justify-center transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-[#6366F1] focus:ring-offset-2 focus:ring-offset-[#0D0D0D]"
-                    aria-label="Twitter"
+                    aria-label="Instagram"
+                    target="_blank" rel="noopener noreferrer"
                   >
-                    <Twitter size={18} className="text-white" />
+                    <Instagram size={18} className="text-white" />
                   </a>
                 </div>
               </div>
